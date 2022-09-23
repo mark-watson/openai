@@ -7,7 +7,7 @@ to your **~/quicklisp/local-projects** directory. Then in **~/quicklisp/local-pr
 
     make fetch
 
-to get all of the librsary examples from my book.
+to get all of the library examples from my book.
 
 
 ## setting your OpenAI API key
