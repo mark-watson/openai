@@ -38,3 +38,44 @@ this: \"Justice Kennedy's"
 ```
 
 Also try **openai:summarize** and **openai:answer-question**. See my book for examples and example output.
+
+```
+(setf z "Pizzas are made with whole wheat. The standard topping is red sauce but white sauce is also available. Large pizzas are $20 and medium are $12. Toppings include mushrooms, extra cheese, garlic, and sausage. How much is a large Pizza?")
+
+(openai:answer-question z 200)
+"$20.00"
+CL-USER 20 > (setf z "Pizzas are made with whole wheat. The standard topping is red sauce but white sauce is also available. Large pizzas are $20 and medium are $12. Toppings cost $1 each and include mushrooms, extra cheese, garlic, and sausage. How much is a large Pizza with mushroom topping?")
+"Pizzas are made with whole wheat. The standard topping is red sauce but white sauce is also available. Large pizzas are $20 and medium are $12. Toppings cost $1 each and include mushrooms, extra cheese, garlic, and sausage. How much is a large Pizza with mushroom topping?"
+
+CL-USER 21 > (openai:answer-question z 22)
+"$20 + $1 + $1 = $22"
+```
+
+Not quite right.
+
+This works with ChatGPT, but not this API (tested 2023/02/04):
+
+```
+(setf z "Pizzas are made with whole wheat. The standard topping is red sauce but white sauce is also available. Large pizzas are $20 and medium are $12. Toppings cost $1 each and include mushrooms, extra cheese, garlic, and sausage. How much is a large Pizza with mushroom topping?")
+```
+
+Another try (this works very well with ChatGPT):
+
+```
+CL-USER 23 > (openai:answer-question "What should I pack for a road trip to Arizona?" 150)
+"Arizona is a great place to visit in the winter, spring, and fall. The summers are very hot, so pack light and bring lots of water."
+```
+
+## Embeddings
+
+```
+(setf e1 (openai::embeddings "John bought a new car"))
+
+(setf e2 (openai::embeddings "who bought what"))
+
+CL-USER 23 > (openai::dot-product e1 e1)
+0.9999999
+
+CL-USER 24 > (openai::dot-product e1 e2)
+0.7841768
+```
