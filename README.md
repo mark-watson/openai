@@ -79,3 +79,137 @@ CL-USER 23 > (openai::dot-product e1 e1)
 CL-USER 24 > (openai::dot-product e1 e2)
 0.7841768
 ```
+
+## Experiments with prompts
+
+### Experiment 1: find entities and relationshiops
+
+```
+The task is to extract as many relevant entities and the relationships between these entities.\n
+When possible, return the type of an entity using the Wikipedia class system.\n
+Extract all relevant relationships between identified entities.\n
+The relationships should follow the Wikipedia schema type.
+The output of a relationship should be in a form of a triple Head, Relationship, Tail, for example
+Bill Gates, BORN_AT, Seatle.\n
+As an example "Bill Gates worked at Microsoft" should have an output with the following format:\n
+entity
+Bill Gates, person
+Microsoft, organization
+
+relationships
+Bill Gates, WORKET AT, Microsoft\n
+Task: process this text:
+Steve Jobes founded Apple Computer and Bill Gates started Microsoft. Seattle is in the state of Washington.
+Steve lived in Palo Alto. Palo Alto is located in California.
+```
+
+ChatGPT 4 returns:
+
+```
+entities
+Steve Jobs, person
+Apple Computer, organization
+Bill Gates, person
+Microsoft, organization
+Seattle, city
+Washington, administrative territorial entity
+
+relationships
+Steve Jobs, FOUNDED, Apple Computer
+Bill Gates, FOUNDED, Microsoft
+Seattle, IS_IN, Washington
+```
+
+### Experiment 2: disambigualte relation ship names
+
+```
+Given a list of relationships like:
+
+brother
+located in
+sister
+sibling
+found at
+
+Then return a list with an index for each unique relationship, like:
+
+brother, 1
+located in, 2
+sister, 1
+sibling, 1
+found at, 2
+
+Task: process the following text:
+
+Sam has a brother Mike. Suzy has a sister Sally, a mother Jill, and a father Bill.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family alllive in Los Angeles.
+```
+
+Results are:
+
+```
+entities
+Steve Jobs, person
+Apple Computer, organization
+Bill Gates, person
+Microsoft, organization
+Seattle, city
+Washington, administrative territorial entity
+Palo Alto, city
+California, administrative territorial entity
+
+relationships
+Steve Jobs, FOUNDED, Apple Computer
+Bill Gates, STARTED, Microsoft
+Seattle, IS_IN, Washington
+Steve Jobs, LIVED_IN, Palo Alto
+Palo Alto, IS_LOCATED_IN, California
+```
+
+ChatGPT 4 results are:
+
+```
+entities
+Sam, person
+Mike, person
+Suzy, person
+Sally, person
+Jill, person
+Bill, person
+San Diego, city
+Oakland, city
+Los Angeles, city
+
+relationships
+Sam, HAS_A, brother (Mike)
+Suzy, HAS_A, sister (Sally)
+Suzy, HAS_A, mother (Jill)
+Suzy, HAS_A, father (Bill)
+Mike, IS_IN, San Diego
+Sam, IS_LOCATED_IN, Oakland
+Suzy, FAMILY_LIVE_IN, Los Angeles
+```
+
+### Experiment 3: topic modeling (or document classification)
+
+```
+Topic modeling involves reading text and assigning a topic name (also known as a document classification).
+The topics that you know how to classify are:
+
+sports
+health
+chemistry
+economy
+politics
+
+Task: what is the best topic name for the following text:
+
+John and Sam went to the playing field yesterday. Sam sparined his ankle.
+```
+
+The result is:
+
+```
+sports
+```
+

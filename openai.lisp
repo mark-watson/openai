@@ -9,12 +9,12 @@
           (uiop:run-program
            curl-command
            :output :string)))
-    (princ curl-command)
-    (print response)
+    ;;(princ curl-command)
+    ;;(print response)
     (with-input-from-string
         (s response)
       (let* ((json-as-list (json:decode-json s)))
-        (pprint json-as-list)
+        ;;(pprint json-as-list)
         ;; extract text (this might change if OpenAI changes JSON return format):
         (cdar (cadr (nth 4 json-as-list)))))))
 
