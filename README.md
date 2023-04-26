@@ -231,7 +231,62 @@ Explanation:
 In the processed text, the relationship names are disambiguated and assigned an index according to the given list of relationships. The original text is rewritten using these relationship indices. For example, "Sam has a brother Mike" is rewritten as "Sam has a brother (1) Mike," where "(1)" represents the index for the relationship "brother." Similarly, "Mike is in San Diego" is rewritten as "Mike is (2) in San Diego," where "(2)" represents the index for the relationship "located in." The same process is applied to other sentences in the text.
 ```
 
-### Experiment 4: topic modeling (or document classification)
+### Experiment 4: disambiguate relation ship names and rewrite text, only output rewritten text
+
+```
+We want to disambiguate relationship names and then rewrite text using canonical relationship names.
+
+Given a list of relationships like:
+
+brother
+located in
+sister
+sibling
+found at
+father
+location
+mother
+relative
+
+Then generate a list with an index for each unique relationship, like:
+
+brother, <1>
+located in, <2>
+sister, <1>
+sibling, <1>
+found at, <2>
+father, <1>
+location, <2>
+mother, <1>
+relative, <1>
+
+And then rewrite the original text using the relation indices, and list relation names with indices.
+
+Task: process the following text:
+
+Sam has a brother Mike. Suzy has a sister Sally. Suzy has a mother Jill, and a father Bill.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
+```
+
+The ChatGPT 4 output is:
+
+```
+First, let's create a list with an index for each unique relationship:
+
+brother, sister, sibling, father, mother, relative
+located in, found at, location
+Now, let's rewrite the original text using the relation indices:
+
+Sam has a <1> Mike. Suzy has a <1> Sally. Suzy has a <1> Jill, and a <1> Bill.
+Mike is <2> San Diego. Sam is <2> Oakland. Suzy's family all live <2> Los Angeles.
+
+Relation names with indices:
+
+<1> brother, sister, sibling, father, mother, relative
+<2> located in, found at, location
+```
+
+### Experiment 5: topic modeling (or document classification)
 
 ```
 Topic modeling involves reading text and assigning a topic name (also known as a document classification).
