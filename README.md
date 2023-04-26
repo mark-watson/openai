@@ -202,21 +202,14 @@ And then rewrite the original text with the relation indices.
 Task: process the following text:
 
 Sam has a brother Mike. Suzy has a sister Sally. Suszy ahs a mother Jill, and a father Bill.
-Mike is in San Diego. Sam is located is Oakland. Suzy's family alllive in Los Angeles.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
 ```
 
 The ChatGPT 4 output is:
 
 ```
-Original text:
-Sam has a brother Mike. Suzy has a sister Sally. Suszy has a mother Jill, and a father Bill.
-Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
+First, we create the indexed list of unique relationships:
 
-Processed text:
-Sam has a brother (1) Mike. Suzy has a sister (1) Sally. Suszy has a mother (1) Jill, and a father (1) Bill.
-Mike is (2) in San Diego. Sam is (2) located is Oakland. Suzy's family all live (2) in Los Angeles.
-
-Relationship index:
 brother, 1
 located in, 2
 sister, 1
@@ -227,8 +220,10 @@ location, 2
 mother, 1
 relative, 1
 
-Explanation:
-In the processed text, the relationship names are disambiguated and assigned an index according to the given list of relationships. The original text is rewritten using these relationship indices. For example, "Sam has a brother Mike" is rewritten as "Sam has a brother (1) Mike," where "(1)" represents the index for the relationship "brother." Similarly, "Mike is in San Diego" is rewritten as "Mike is (2) in San Diego," where "(2)" represents the index for the relationship "located in." The same process is applied to other sentences in the text.
+Now, we rewrite the original text using the relation indices:
+
+Sam has a 1 Mike. Suzy has a 1 Sally. Suszy has a 1 Jill, and a 1 Bill.
+Mike is 2 San Diego. Sam is 2 Oakland. Suzy's family all 2 Los Angeles.
 ```
 
 ### Experiment 4: disambiguate relation ship names and rewrite text, only output rewritten text
@@ -260,7 +255,7 @@ location, <2>
 mother, <1>
 relative, <1>
 
-And then rewrite the original text using the relation indices, and list relation names with indices.
+And then rewrite the original text using the relation indices, and list relation names with indices. Only output rewritten text and names with indices.
 
 Task: process the following text:
 
@@ -271,19 +266,13 @@ Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los A
 The ChatGPT 4 output is:
 
 ```
-First, let's create a list with an index for each unique relationship:
-
-brother, sister, sibling, father, mother, relative
-located in, found at, location
-Now, let's rewrite the original text using the relation indices:
-
+Rewritten text:
 Sam has a <1> Mike. Suzy has a <1> Sally. Suzy has a <1> Jill, and a <1> Bill.
-Mike is <2> San Diego. Sam is <2> Oakland. Suzy's family all live <2> Los Angeles.
+Mike is <2> San Diego. Sam is <2> Oakland. Suzy's family all live in Los Angeles.
 
 Relation names with indices:
-
-<1> brother, sister, sibling, father, mother, relative
-<2> located in, found at, location
+<1> - family member
+<2> - located in
 ```
 
 ### Experiment 5: topic modeling (or document classification)
