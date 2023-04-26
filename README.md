@@ -130,6 +130,10 @@ located in
 sister
 sibling
 found at
+father
+location
+mother
+relative
 
 Then return a list with an index for each unique relationship, like:
 
@@ -138,59 +142,96 @@ located in, 2
 sister, 1
 sibling, 1
 found at, 2
+father, 1
+location, 2
+mother, 1
+relative, 1
 
 Task: process the following text:
 
-Sam has a brother Mike. Suzy has a sister Sally, a mother Jill, and a father Bill.
+Sam has a brother Mike. Suzy has a sister Sally. Suszy ahs a mother Jill, and a father Bill.
 Mike is in San Diego. Sam is located is Oakland. Suzy's family alllive in Los Angeles.
-```
-
-Results are:
-
-```
-entities
-Steve Jobs, person
-Apple Computer, organization
-Bill Gates, person
-Microsoft, organization
-Seattle, city
-Washington, administrative territorial entity
-Palo Alto, city
-California, administrative territorial entity
-
-relationships
-Steve Jobs, FOUNDED, Apple Computer
-Bill Gates, STARTED, Microsoft
-Seattle, IS_IN, Washington
-Steve Jobs, LIVED_IN, Palo Alto
-Palo Alto, IS_LOCATED_IN, California
 ```
 
 ChatGPT 4 results are:
 
 ```
-entities
-Sam, person
-Mike, person
-Suzy, person
-Sally, person
-Jill, person
-Bill, person
-San Diego, city
-Oakland, city
-Los Angeles, city
+Based on the provided list of relationships, here is the processed text with an index for each unique relationship:
 
-relationships
-Sam, HAS_A, brother (Mike)
-Suzy, HAS_A, sister (Sally)
-Suzy, HAS_A, mother (Jill)
-Suzy, HAS_A, father (Bill)
-Mike, IS_IN, San Diego
-Sam, IS_LOCATED_IN, Oakland
-Suzy, FAMILY_LIVE_IN, Los Angeles
+Sam has a brother Mike. (brother, 1)
+Suzy has a sister Sally. (sister, 1)
+Suzy has a mother Jill, and a father Bill. (mother, 1; father, 1)
+Mike is in San Diego. (located in, 2)
+Sam is located in Oakland. (located in, 2)
+Suzy's family all live in Los Angeles. (location, 2)
+
+Here, relationships like "brother," "sister," "mother," and "father" are assigned an index of 1, while relationships like "located in" and "location" are assigned an index of 2.
 ```
 
-### Experiment 3: topic modeling (or document classification)
+### Experiment 3:  disambiguate relation ship names and rewrite text
+
+```
+We want to disambiguate relationship names and then rewrite text using canonical relationship names.
+
+Given a list of relationships like:
+
+brother
+located in
+sister
+sibling
+found at
+father
+location
+mother
+relative
+
+Then generate a list with an index for each unique relationship, like:
+
+brother, 1
+located in, 2
+sister, 1
+sibling, 1
+found at, 2
+father, 1
+location, 2
+mother, 1
+relative, 1
+
+And then rewrite the original text with the relation indices.
+
+Task: process the following text:
+
+Sam has a brother Mike. Suzy has a sister Sally. Suszy ahs a mother Jill, and a father Bill.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family alllive in Los Angeles.
+```
+
+The ChatGPT 4 output is:
+
+```
+Original text:
+Sam has a brother Mike. Suzy has a sister Sally. Suszy has a mother Jill, and a father Bill.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
+
+Processed text:
+Sam has a brother (1) Mike. Suzy has a sister (1) Sally. Suszy has a mother (1) Jill, and a father (1) Bill.
+Mike is (2) in San Diego. Sam is (2) located is Oakland. Suzy's family all live (2) in Los Angeles.
+
+Relationship index:
+brother, 1
+located in, 2
+sister, 1
+sibling, 1
+found at, 2
+father, 1
+location, 2
+mother, 1
+relative, 1
+
+Explanation:
+In the processed text, the relationship names are disambiguated and assigned an index according to the given list of relationships. The original text is rewritten using these relationship indices. For example, "Sam has a brother Mike" is rewritten as "Sam has a brother (1) Mike," where "(1)" represents the index for the relationship "brother." Similarly, "Mike is in San Diego" is rewritten as "Mike is (2) in San Diego," where "(2)" represents the index for the relationship "located in." The same process is applied to other sentences in the text.
+```
+
+### Experiment 4: topic modeling (or document classification)
 
 ```
 Topic modeling involves reading text and assigning a topic name (also known as a document classification).
