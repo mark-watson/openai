@@ -80,9 +80,11 @@ CL-USER 24 > (openai::dot-product e1 e2)
 0.7841768
 ```
 
-## Experiments with prompts
+## Experiments with prompts (material for Prompt Engineering Chapter)
 
-### Experiment 1: find entities and relationshiops
+You should references both chapters on OpenAI APIs and Pronpt Engineering in my Common Lisp book that you can read online for free: [https://leanpub.com/lovinglisp/read](https://leanpub.com/lovinglisp/read)
+
+### Experiment 1: find entities and relationships
 
 ```
 The task is to extract as many relevant entities and the relationships between these entities.\n
@@ -120,7 +122,7 @@ Bill Gates, FOUNDED, Microsoft
 Seattle, IS_IN, Washington
 ```
 
-### Experiment 2: disambigualte relation ship names
+### Experiment 2: disambiguate relationship names
 
 ```
 Given a list of relationships like:
@@ -150,7 +152,7 @@ relative, 1
 Task: process the following text:
 
 Sam has a brother Mike. Suzy has a sister Sally. Suszy ahs a mother Jill, and a father Bill.
-Mike is in San Diego. Sam is located is Oakland. Suzy's family alllive in Los Angeles.
+Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
 ```
 
 ChatGPT 4 results are:
@@ -257,7 +259,7 @@ relative, <1>
 
 And then rewrite the original text using the relation indices, and list relation names with indices. Only output rewritten text and names with indices.
 
-Task: process the following text:
+Task: process the following text outputing JSON format:
 
 Sam has a brother Mike. Suzy has a sister Sally. Suzy has a mother Jill, and a father Bill.
 Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los Angeles.
@@ -266,13 +268,20 @@ Mike is in San Diego. Sam is located is Oakland. Suzy's family all live in Los A
 The ChatGPT 4 output is:
 
 ```
-Rewritten text:
-Sam has a <1> Mike. Suzy has a <1> Sally. Suzy has a <1> Jill, and a <1> Bill.
-Mike is <2> San Diego. Sam is <2> Oakland. Suzy's family all live in Los Angeles.
-
-Relation names with indices:
-<1> - family member
-<2> - located in
+{
+  "relationships": {
+    "brother": "<1>",
+    "located in": "<2>",
+    "sister": "<1>",
+    "sibling": "<1>",
+    "found at": "<2>",
+    "father": "<1>",
+    "location": "<2>",
+    "mother": "<1>",
+    "relative": "<1>"
+  },
+  "rewritten_text": "Sam has a brother Mike. Suzy has a sister Sally. Suzy has a mother Jill, and a father Bill.\nMike is <2> San Diego. Sam is <2> Oakland. Suzy's family all live <2> Los Angeles."
+}
 ```
 
 ### Experiment 5: topic modeling (or document classification)
@@ -287,14 +296,21 @@ chemistry
 economy
 politics
 
+The output format will be:
+
+Known topics: <list of all topics>
+Topic: <topic of text>
+
 Task: what is the best topic name for the following text:
 
-John and Sam went to the playing field yesterday. Sam sparined his ankle.
+John and Sam went to the playing field yesterday. Sam sprained his ankle.
 ```
 
 The result is:
 
 ```
-sports
+Known topics: sports, health, chemistry, economy, politics
+
+Topic: sports
 ```
 

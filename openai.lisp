@@ -2,7 +2,8 @@
 
 ;; define the environment variable "OPENAI_KEY" with the value of your OpenAI API key
 
-(defvar openai-davinci-model-host "https://api.openai.com/v1/engines/davinci/completions")
+;;(defvar openai-davinci-model-host "https://api.openai.com/v1/engines/davinci/completions")
+(defvar openai-davinci-model-host "https://api.openai.com/v1/completions/gpt-3.5-turbo-instruct")
 
 (defun openai-helper (curl-command)
   (let ((response
@@ -108,4 +109,6 @@
 
 (print (openai:answer-question "Where were the 1992 Olympics held?" 60))
 (print (openai:answer-question "Where is the Valley of Kings?" 60))
+(print (openai:answer-question "Mary is 30 years old and Bob is 25. Who is older?" 60))
+
 |#
