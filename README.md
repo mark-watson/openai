@@ -1,4 +1,4 @@
-# Common Lisp library to access OpenAI GPT3 APIs
+# Common Lisp library to access OpenAI GPT4 APIs
 
 From my book URI: https://leanpub.com/lovinglisp
 
@@ -8,6 +8,8 @@ to your **~/quicklisp/local-projects** directory. Then in **~/quicklisp/local-pr
     make fetch
 
 to get all of the library examples from my book.
+
+2024/01/09: updated to latest OpenAI APIs, now using gpt-4
 
 
 ## setting your OpenAI API key
