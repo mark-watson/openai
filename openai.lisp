@@ -3,7 +3,10 @@
 ;; define the environment variable "OPENAI_KEY" with the value of your OpenAI API key
 
 ;;(defvar openai-davinci-model-host "https://api.openai.com/v1/engines/davinci/completions")
-(defvar openai-davinci-model-host "https://api.openai.com/v1/completions/gpt-3.5-turbo-instruct")
+;;(defvar openai-davinci-model-host "https://api.openai.com/v1/completions/gpt-3.5-turbo-instruct")
+
+(defvar model-host "https://api.openai.com/v1/chat/completions")
+
 
 (defun openai-helper (curl-command)
   (let ((response
@@ -15,54 +18,42 @@
     (with-input-from-string
         (s response)
       (let* ((json-as-list (json:decode-json s)))
-        ;;(pprint json-as-list)
+        ;;(pprint (nth 4 json-as-list))
         ;; extract text (this might change if OpenAI changes JSON return format):
-        (cdar (cadr (nth 4 json-as-list)))))))
+        (cdadr (cdadr (cadr (nth 4 json-as-list)))))))) ;; used to be (cdar (cadr (nth 4 json-as-list))
 
 (defun completions (starter-text max-tokens)
   (let* ((curl-command
           (concatenate
            'string
-           "curl " openai-davinci-model-host
+           "curl " model-host
            " -H \"Content-Type: application/json\""
            " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
-           " -d '{\"prompt\": \"" starter-text "\", \"max_tokens\": "
+           " -d '{\"messages\": [{\"role\": \"user\", \"content\": \"" starter-text "\"}], \"model\": \"gpt-4\", \"max_tokens\": "
            (write-to-string max-tokens)  "}'")))
     (openai-helper curl-command)))
+
+;;            " -d '{{\"messages\": [{\"role\": \"user\", \"content\": \"" starter-text "\"},]}, \"model\": \"gpt-4\", \"max_tokens\": "
 
 (defun summarize (some-text max-tokens)
   (let* ((curl-command
           (concatenate
            'string
-           "curl " openai-davinci-model-host
+           "curl " model-host
            " -H \"Content-Type: application/json\""
            " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
-           " -d '{\"prompt\": \"" some-text "\", \"max_tokens\": "
-           (write-to-string max-tokens) ", \"presence_penalty\": 0.0"
-           ", \"temperature\": 0.3, \"top_p\": 1.0, \"frequency_penalty\": 0.0 }'")))
+           " -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Sumarize: " some-text 
+           "\"}], \"model\": \"gpt-4\", \"max_tokens\": " (write-to-string max-tokens)  "}'")))
     (openai-helper curl-command)))
 
 (defun answer-question (question-text max-tokens)
-  (let* ((q-text
+  (let ((q-text
           (concatenate
            'string
-           "\nQ: " question-text "\nA:"))
-         (curl-command
-          (concatenate
-           'string
-           "curl " openai-davinci-model-host
-           " -H \"Content-Type: application/json\""
-           " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
-           " -d '{\"prompt\": \"" q-text "\", \"max_tokens\": "
-           (write-to-string max-tokens) ", \"presence_penalty\": 0.0, \"stop\": [\"\\n\"]"
-           ", \"temperature\": 0.0, \"top_p\": 1.0, \"frequency_penalty\": 0.0 }'"))
-         (answer (openai-helper curl-command))
-         (index (search "nQ:" answer)))
-    (if index
-        (string-trim " " (subseq answer 0 index))
-        (string-trim " " answer))))
+           "\nQ: " question-text "\nA:")))
+    (completions question-text max-tokens)))
 
-  
+
 (defun embeddings (text)
   (let* ((curl-command
           (concatenate
