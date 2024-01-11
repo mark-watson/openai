@@ -13,14 +13,11 @@
           (uiop:run-program
            curl-command
            :output :string)))
-    ;;(princ curl-command)
-    ;;(print response)
     (with-input-from-string
         (s response)
       (let* ((json-as-list (json:decode-json s)))
-        ;;(pprint (nth 4 json-as-list))
         ;; extract text (this might change if OpenAI changes JSON return format):
-        (cdadr (cdadr (cadr (nth 4 json-as-list)))))))) ;; used to be (cdar (cadr (nth 4 json-as-list))
+        (cdr (assoc :content (cdr (assoc :message (cadr (assoc :choices json-as-list))))))))))
 
 (defun completions (starter-text max-tokens)
   (let* ((curl-command
@@ -67,7 +64,7 @@
             curl-command
             :output :string)))
       ;;(princ curl-command)
-      ;;(print response)
+      ;;(pprint response)
       (with-input-from-string
           (s response)
         (let* ((json-as-list (json:decode-json s)))
