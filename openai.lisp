@@ -2,9 +2,6 @@
 
 ;; define the environment variable "OPENAI_KEY" with the value of your OpenAI API key
 
-;;(defvar openai-davinci-model-host "https://api.openai.com/v1/engines/davinci/completions")
-;;(defvar openai-davinci-model-host "https://api.openai.com/v1/completions/gpt-3.5-turbo-instruct")
-
 (defvar model-host "https://api.openai.com/v1/chat/completions")
 
 
@@ -19,18 +16,22 @@
         ;; extract text (this might change if OpenAI changes JSON return format):
         (cdr (assoc :content (cdr (assoc :message (cadr (assoc :choices json-as-list))))))))))
 
+
 (defun completions (starter-text max-tokens)
-  (let* ((curl-command
+  (let* ((d
+          (cl-json:encode-json-to-string
+           `((:messages . (((:role . "user") (:content . ,starter-text))))
+             (:model . "gpt-4")
+             (:max_tokens . ,max-tokens))))
+         (curl-command
           (concatenate
            'string
            "curl " model-host
            " -H \"Content-Type: application/json\""
            " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
-           " -d '{\"messages\": [{\"role\": \"user\", \"content\": \"" starter-text "\"}], \"model\": \"gpt-4\", \"max_tokens\": "
-           (write-to-string max-tokens)  "}'")))
+           " -d '" d "'")))
     (openai-helper curl-command)))
 
-;;            " -d '{{\"messages\": [{\"role\": \"user\", \"content\": \"" starter-text "\"},]}, \"model\": \"gpt-4\", \"max_tokens\": "
 
 (defun summarize (some-text max-tokens)
   (let* ((curl-command
