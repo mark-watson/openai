@@ -52,6 +52,9 @@
     (completions question-text max-tokens)))
 
 
+;; text-embedding-3-large embeddings are 3072 floats
+;; text-embedding-3-small embeddings are 1536 floats
+
 (defun embeddings (text)
   (let* ((curl-command
           (concatenate
@@ -59,7 +62,8 @@
            "curl  https://api.openai.com/v1/embeddings "
            " -H \"Content-Type: application/json\""
            " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
-           " -d '{\"input\": \"" text "\", \"model\": \"text-embedding-ada-002\"}'")))
+           " -d '{\"input\": \"" text "\", \"model\": \"text-embedding-3-small\"}'")))
+;;           " -d '{\"input\": \"" text "\", \"model\": \"text-embedding-3-large\"}'")))
     (let ((response
            (uiop:run-program
             curl-command
