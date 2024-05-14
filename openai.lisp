@@ -4,12 +4,13 @@
 
 (defvar model-host "https://api.openai.com/v1/chat/completions")
 
-
 (defun openai-helper (curl-command)
+    (princ curl-command)
   (let ((response
           (uiop:run-program
            curl-command
            :output :string)))
+    (pprint response)
     (with-input-from-string
         (s response)
       (let* ((json-as-list (json:decode-json s)))
@@ -18,10 +19,11 @@
 
 
 (defun completions (starter-text max-tokens)
-  (let* ((d
+  (let* ((input-text (write-to-string starter-text))
+         (d
           (cl-json:encode-json-to-string
-           `((:messages . (((:role . "user") (:content . ,starter-text))))
-             (:model . "gpt-4")
+           `((:messages . (((:role . "user") (:content . ,input-text))))
+             (:model . "gpt-4o")
              (:max_tokens . ,max-tokens))))
          (curl-command
           (concatenate
@@ -41,7 +43,7 @@
            " -H \"Content-Type: application/json\""
            " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" " 
            " -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Sumarize: " some-text 
-           "\"}], \"model\": \"gpt-4\", \"max_tokens\": " (write-to-string max-tokens)  "}'")))
+           "\"}], \"model\": \"gpt-4o\", \"max_tokens\": " (write-to-string max-tokens)  "}'")))
     (openai-helper curl-command)))
 
 (defun answer-question (question-text max-tokens)
