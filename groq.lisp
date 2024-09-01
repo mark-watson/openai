@@ -1,6 +1,6 @@
-(ql:quickload '(:drakma :cl-json :uiop))
+(in-package #:openai)
 
-(defun send-groq-request (content)
+(defun groq-completion (content)
   (let* ((url "https://api.groq.com/openai/v1/chat/completions")
          (api-key (uiop:getenv "GROQ_API_KEY"))
          (headers `(("Authorization" . ,(concatenate 'string "Bearer " api-key))
@@ -19,11 +19,11 @@
                            :additional-headers headers
                            :content json-data)))))
 
-(defun extract-content (resp)
+(defun groq-extract-content (resp)
   (cdr (nth 2 (cadr (cadr (assoc :choices resp))))))
 
 (defun testg ()
-  (let ((resp (send-groq-request "How do I get better at programming?")))
+  (let ((resp (groq-completion "How do I get better at programming?")))
     (print resp)
     (terpri)
-    (print (extract-content resp))))
+    (print (groq-extract-content resp))))

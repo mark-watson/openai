@@ -1,4 +1,4 @@
-# Common Lisp library to access OpenAI GPT4 APIs
+# Common Lisp library to access OpenAI GPT4 APIs and the compatible Groq LLM service APIs
 
 From my book URI: https://leanpub.com/lovinglisp
 
@@ -15,8 +15,13 @@ to get all of the library examples from my book.
 ## setting your OpenAI API key
  
  Define the  "OPENAI_KEY" environment variable with the value of your OpenAI API key
- 
-## Example:
+
+## Setting you Groq API key
+
+ Define the  "GROQ_API_KEY" environment variable with the value of your OpenAI API key
+
+
+## OpenAI examples:
 
 ```lisp
 cl-user> (ql:quickload :openai)
@@ -67,6 +72,12 @@ Another try (this works very well with ChatGPT):
 CL-USER 23 > (openai:answer-question "What should I pack for a road trip to Arizona?" 150)
 "Arizona is a great place to visit in the winter, spring, and fall. The summers are very hot, so pack light and bring lots of water."
 ```
+
+## Groq LLM serive API examples
+
+    (ql:quickload :openai)
+	(openai:groq-completion "How do I get better at programming?")
+	
 
 ## Embeddings
 

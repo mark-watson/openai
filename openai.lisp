@@ -23,7 +23,7 @@
          (d
           (cl-json:encode-json-to-string
            `((:messages . (((:role . "user") (:content . ,input-text))))
-             (:model . "gpt-4o")
+             (:model . "gpt-4o") ;; use gpt-4o-mini to save abt 20x on costs, with similar results
              (:max_tokens . ,max-tokens))))
          (curl-command
           (concatenate
