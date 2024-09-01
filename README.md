@@ -77,6 +77,7 @@ CL-USER 23 > (openai:answer-question "What should I pack for a road trip to Ariz
 
     (ql:quickload :openai)
 	(openai:groq-completion "How do I get better at programming?")
+	(openai:groq-extract-content (openai:groq-completion "How do I get better at programming?"))
 	
 
 ## Embeddings
