@@ -3,6 +3,8 @@
 ;; define the environment variable "OPENAI_KEY" with the value of your OpenAI API key
 
 (defvar model-host "https://api.openai.com/v1/chat/completions")
+;; use gpt-4o for very good results, or gpt-4o-mini to save abt 20x on costs, with similar results:
+(defvar model "gpt-4o-mini")
 
 (defun openai-helper (curl-command)
     (princ curl-command)
@@ -23,7 +25,7 @@
          (d
           (cl-json:encode-json-to-string
            `((:messages . (((:role . "user") (:content . ,input-text))))
-             (:model . "gpt-4o") ;; use gpt-4o-mini to save abt 20x on costs, with similar results
+             (:model . ,model) 
              (:max_tokens . ,max-tokens))))
          (curl-command
           (concatenate
@@ -105,5 +107,7 @@
 (print (openai:answer-question "Where were the 1992 Olympics held?" 60))
 (print (openai:answer-question "Where is the Valley of Kings?" 60))
 (print (openai:answer-question "Mary is 30 years old and Bob is 25. Who is older?" 60))
+
+(print  (openai:completions "A train leaves Boston heading west at 60 mph. Two hours later, a car leaves from the same place heading in the same direction at 80 mph. At what time does the car catch up to the train?" 1000))
 
 |#
