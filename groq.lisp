@@ -27,3 +27,12 @@
     (print resp)
     (terpri)
     (print (groq-extract-content resp))))
+
+(defun user-input ()
+  (loop
+     (format t "Enter your input (type 'quit' or 'exit' to stop): ")
+     (let ((input (read-line)))
+       (if (member input '("quit" "Quit" "exit" "Exit") :test 'string=)
+           (return)
+           (let ((response (groq-completion input)))
+             (format t "~A~%" (groq-extract-content response)))))))
