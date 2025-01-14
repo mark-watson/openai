@@ -7,7 +7,7 @@
 (defvar model "gpt-4o-mini")
 
 (defun openai-helper (curl-command)
-    (princ curl-command)
+  ;;(princ curl-command)
   (let ((response
           (uiop:run-program
            curl-command
