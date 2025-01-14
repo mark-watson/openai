@@ -12,7 +12,7 @@
           (uiop:run-program
            curl-command
            :output :string)))
-    (pprint response)
+    ;;(pprint response)
     (with-input-from-string
         (s response)
       (let* ((json-as-list (json:decode-json s)))
