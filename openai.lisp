@@ -2,9 +2,9 @@
 
 ;; define the environment variable "OPENAI_KEY" with the value of your OpenAI API key
 
-(defvar model-host "https://api.openai.com/v1/chat/completions")
+(defvar *model-host* "https://api.openai.com/v1/chat/completions")
 ;; use gpt-4o for very good results, or gpt-4o-mini to save abt 20x on costs, with similar results:
-(defvar model "gpt-4o-mini")
+(defvar *model* "gpt-4o-mini")
 
 (defun openai-helper (curl-command)
   ;;(princ curl-command)
@@ -23,10 +23,10 @@
 (defun completions (starter-text max-tokens)
   "Send a completion request to OpenAI API with given text and token limit"
   (let* ((input-text (write-to-string starter-text))
-         (d
+         (request-body
           (cl-json:encode-json-to-string
            `((:messages . (((:role . "user") (:content . ,input-text))))
-             (:model . ,model) 
+             (:model . ,*model*) 
              (:max_tokens . ,max-tokens))))
          (curl-command
            (format nil 
@@ -35,7 +35,7 @@
                    -H \"Authorization: Bearer ~A\" ~
                    -d '~A'"
                    *model-host*
-                   api-key
+                   (uiop:getenv "OPENAI_KEY")
                    request-body)))
     (openai-helper curl-command)))
 
