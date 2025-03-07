@@ -187,9 +187,9 @@ Example:
                                                          (cons :description "Math expression like 2 + 2")))))
        (cons :required '("expression"))))
 
-(openai::completions "Use function calling for: What's the weather like in New York?" 1000 '("get_weather" "calculate"))
-(terpri) (terpri) (terpri) (terpri) (terpri) 
-(completions "The President went to Congress" 20)
+;(openai::completions "Use function calling for: What's the weather like in New York?" 1000 '("get_weather" "calculate"))
+;(terpri) (terpri) (terpri) (terpri) (terpri) 
+;(completions "The President went to Congress" 20)
 
 #|
 ;; Example calls:
