@@ -12,14 +12,17 @@
 (defstruct openai-function
   name
   description
-  parameters)
+  parameters
+  func)
 
-(defun register-function (name description parameters)
+(defun register-function (name description parameters fn)
+  (format t "Registering ~A ~A~%" name fn)
   (setf (gethash name *available-functions*)
         (make-openai-function
          :name name
          :description description
-         :parameters parameters)))
+         :parameters parameters
+	 :func fn)))
 
 ; #S(openai-function
 ;    :name get_weather
@@ -50,22 +53,24 @@
              (write-string "\\\"" out)
              (write-char ch out)))))
 
-(defvar *xx* nil)
 
 (defun handle-function-call (function-call)
-  (setf *xx* function-call)
-  ;; *xx* looks like: ((:name . "get_weather") (:arguments . "{\"location\":\"New York\"}"))
+  ;; function-call looks like: ((:name . "get_weather") (:arguments . "{\"location\":\"New York\"}"))
   (format t "~% ** handle-function-call (DUMMY) fucntion-call: ~A~%" function-call)
   (let* ((name (cdr (assoc :name function-call)))
          (args-string (cdr (assoc :arguments function-call)))
          (args (and args-string (cl-json:decode-json-from-string args-string)))
-         (func (gethash name *available-functions*)))
+         (func (openai-function-func (gethash name *available-functions*))))
     (format t "~% handle-function-call name: ~A" name)
     (format t "~% handle-function-call args-string: ~A" args-string)
     (format t "~% handle-function-call args: ~A" args)
     (format t "~% handle-function-call func: ~A" func)
-    (if func
-        (format nil "Function ~a called with args: ~a" name args)
+    (if (not (null func))
+	(let ()
+          (format t "~%Calling function ~a called with args: ~a~%" name args)
+	  (let ((f-val (apply func (mapcar #'cdr args))))
+	    (format t "~%Return value from func ~A is ~A~%" name f-val)
+	    f-val))
         (error "Unknown function: ~a" name))))
 
 (defun openai-helper (curl-command)
@@ -97,9 +102,6 @@
 
 
 (defun completions (starter-text max-tokens &optional functions)
-  "Send a completion request to OpenAI API with given text, token limit, and optional functions for tool calling.
-Example:
-  (completions \"Use function calling for: What's the weather like in New York?\" 1000 '(\"get_weather\" \"calculate\"))"
   (unless (numberp max-tokens)
     (error "max-tokens must be a number, got: ~a" max-tokens))
   (let* ((function-defs (when functions
@@ -127,49 +129,13 @@ Example:
                   escaped-json)))
     (openai-helper curl-command)))
 
-(defun summarize (some-text max-tokens)
-  (let ((curl-command
-         (concatenate 'string
-                      "curl " *model-host*
-                      " -H \"Content-Type: application/json\""
-                      " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" "
-                      " -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Summarize: " some-text 
-                      "\"}], \"model\": \"gpt-4\", \"max_tokens\": " (write-to-string max-tokens) "}'")))
-    (openai-helper curl-command)))
-
-(defun answer-question (question-text max-tokens)
-  (completions question-text max-tokens))
-
-(defun embeddings (text)
-  "Get embeddings using text-embedding-3-small model (1536 dimensions)"
-  (let* ((curl-command
-          (concatenate 'string
-                       "curl https://api.openai.com/v1/embeddings "
-                       " -H \"Content-Type: application/json\""
-                       " -H \"Authorization: Bearer " (uiop:getenv "OPENAI_KEY") "\" "
-                       " -d '{\"input\": \"" text 
-                       "\", \"model\": \"text-embedding-3-small\"}'"))
-         (response (uiop:run-program curl-command :output :string)))
-    (with-input-from-string (s response)
-      (let ((json-as-list (json:decode-json s)))
-        (cdr (nth 2 (cadr (cadr json-as-list))))))))
-
-(defun dot-product-recursive (a b)
-  "Calculate dot product recursively"
-  (if (or (null a) (null b))
-      0
-      (+ (* (first a) (first b))
-         (dot-product-recursive (rest a) (rest b)))))
-
-(defun dot-product (list1 list2)
-  "Calculate dot product iteratively"
-  (let ((sum 0))
-    (loop for x in list1
-          for y in list2
-          do (setf sum (+ sum (* x y))))
-    sum))
 
 ;;; Sample registrations for functions used in tool calling
+
+(defun get_weather (location)
+  (if (equal location "New York")
+      77.0
+      65.0))
 
 (register-function
  "get_weather"
@@ -177,17 +143,11 @@ Example:
  (list (cons :type "object")
        (cons :properties (list (cons :location (list (cons :type "string")
                                                      (cons :description "The city name")))))
-       (cons :required '("location"))))
+       (cons :required '("location")))
+ #'openai::get_weather)
 
-(register-function
- "calculate"
- "Perform a mathematical calculation"
- (list (cons :type "object")
-       (cons :properties (list (cons :expression (list (cons :type "string")
-                                                         (cons :description "Math expression like 2 + 2")))))
-       (cons :required '("expression"))))
 
-;(openai::completions "Use function calling for: What's the weather like in New York?" 1000 '("get_weather" "calculate"))
+(openai::completions "Use function calling for: What's the weather like in New York?" 1000 '("get_weather"))
 ;(terpri) (terpri) (terpri) (terpri) (terpri) 
 ;(completions "The President went to Congress" 20)
 
