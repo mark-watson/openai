@@ -5,7 +5,7 @@
          (api-key (uiop:getenv "GROQ_API_KEY"))
          (headers `(("Authorization" . ,(concatenate 'string "Bearer " api-key))
                     ("Content-Type" . "application/json")))
-         (data `(("model" . "llama3-70b-8192")
+         (data `(("model" . "meta-llama/llama-4-scout-17b-16e-instruct") ;; "llama3-70b-8192")
 		 ("messages" . ((("role" . "system")
 				 ("content" . "content"))
                                 (("role" . "user")
