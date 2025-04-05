@@ -23,7 +23,7 @@
   (cdr (nth 2 (cadr (cadr (assoc :choices resp))))))
 
 (defun testg ()
-  (let ((resp (groq-completion "How do I get better at programming?")))
+  (let ((resp (groq-completion "Write a Common Lisp framework for LLM MCP: write three things: 1. server side MCP hub. 2. client library. 3. an example program. Note that MCP is Model Context Protocol.")))
     (print resp)
     (terpri)
     (print (groq-extract-content resp))))
