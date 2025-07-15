@@ -213,4 +213,4 @@
 (print (agent-completions "Use function calling to list files in directory" 100 '("list_current_directory")))
 (print (agent-completions "Use function calling to get contents of openai.lisp" 100 '("get_file_content")))
 |#
-```​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+
